@@ -72,7 +72,7 @@ struct AccountInfoView: View {
     
     var body: some View {
         HStack {
-            CustomRemoteImage(UrlString: user.image_url, placeholderView: {
+            CustomRemoteImage(UrlString: "http://localhost:8080/api/pfp?userId=\(user.id)", placeholderView: {
                 Image(systemName: "person")
                     .scaleEffect(1.5)
             })

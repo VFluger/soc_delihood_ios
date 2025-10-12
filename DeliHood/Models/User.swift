@@ -14,6 +14,7 @@ struct getUserHelper: Codable {
 
 // var because can be changes in settings
 struct User: Codable {
+    let id: Int
     var username: String
     var email: String
     var phone: String

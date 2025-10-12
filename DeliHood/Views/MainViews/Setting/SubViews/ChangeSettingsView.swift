@@ -77,7 +77,7 @@ struct ChangeSettingsView: View {
                     Spacer()
                     Group {
                         if let imageUrl = authStore.user?.image_url, !imageUrl.isEmpty {
-                            CustomRemoteImage(UrlString: imageUrl) {
+                            CustomRemoteImage(UrlString: "https://localhost:8080/api/pfp?userid=\(authStore.user?.id)") {
                                 Image(systemName: "person.circle.fill")
                                     .resizable()
                                     .foregroundStyle(.secondary)
@@ -160,11 +160,11 @@ struct DeliveryAddressesSection: View {
         }
     }
 }
-
-#Preview {
-    let user = User(username: "Jane Doe", email: "jane@example.com", phone: "+123456789", image_url: nil, created_at: "2024-08-17")
-    let authStore = AuthStore()
-    authStore.user = user
-    return NavigationStack { ChangeSettingsView().environmentObject(authStore) }
-}
+//
+//#Preview {
+//    let user = User(username: "Jane Doe", email: "jane@example.com", phone: "+123456789", image_url: nil, created_at: "2024-08-17")
+//    let authStore = AuthStore()
+//    authStore.user = user
+//    return NavigationStack { ChangeSettingsView().environmentObject(authStore) }
+//}
 

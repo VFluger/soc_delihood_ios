@@ -51,7 +51,7 @@ struct HomeView: View {
                     Button {
                         vm.showAccount = true
                     } label: {
-                        CustomRemoteImage(UrlString: authStore.user?.image_url) {
+                        CustomRemoteImage(UrlString: "http://localhost:8080/api/pfp?userId=\(authStore.user?.id)") {
                             Image(systemName: "person")
                                 .foregroundStyle(.primary)
                         }

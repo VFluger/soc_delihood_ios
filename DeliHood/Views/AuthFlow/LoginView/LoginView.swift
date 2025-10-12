@@ -137,6 +137,7 @@ struct PasswordTextView: View {
                 //SUBMIT
                 Task {
                     await vm.loginUser()
+                    try await Task.sleep(nanoseconds: 50000000)
                     await authStore.updateState()
                 }
             }
