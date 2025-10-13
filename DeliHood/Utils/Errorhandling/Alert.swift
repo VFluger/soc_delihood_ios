@@ -29,6 +29,9 @@ enum AlertContext {
     static let userAlreadyInDb = AlertItem(title: "User already registered",
                                            message: "A user with this email, phone or username already exists, please choose a different one.")
     
+    static let cannotUploadImage = AlertItem(title: "Upload failed",
+                                           message: "Unfortunatelly, upload of the image failed, please try again later.")
+    
     //MARK: Reset password
     static let forgottenPasswordSend = AlertItem(title: "Check your email", message: "If this email was registered, you should receive an email with a reset link.")
     static let resetPassSuccess = AlertItem(title: "Password reset successful", message: "Password was reset successfully. You can now log in with your new password.")

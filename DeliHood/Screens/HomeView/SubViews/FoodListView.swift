@@ -57,7 +57,7 @@ struct FoodListImageView: View {
     let urlString: String
     
     var body: some View {
-        CustomRemoteImage(UrlString: urlString, placeholderView: {
+        CustomRemoteImage(urlString: urlString, placeholderView: {
             Image("food-placeholder")
                 .renderingMode(.template)
                 .resizable()

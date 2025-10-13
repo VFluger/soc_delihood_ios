@@ -70,6 +70,27 @@ class NetworkManager {
         
     }
     
+    func uploadPfp(_ image: Data) async throws {
+        let url = URL(string: "\(baseURL)/api/upload-pfp")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
+        let boundary = UUID().uuidString
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(AuthManager.shared.getAccessToken() ?? "")", forHTTPHeaderField: "Authorization")
+        
+        var body = Data()
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"pfp\"; filename=\"profile.jpg\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+        body.append(image)
+        body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+        request.httpBody = body
+        
+        let (data, res) = try await URLSession.shared.data(for: request)
+        print( try? JSONSerialization.jsonObject(with: data))
+        }
+    
     //MARK: - Main Get Of Content
     func getMainScreen(lat: Double, lng: Double) async throws -> HomeViewResponse {
         let (data, _) = try await NetworkManager.shared.get(path: "/api/main-screen?lat=\(lat)&lng=\(lng)")

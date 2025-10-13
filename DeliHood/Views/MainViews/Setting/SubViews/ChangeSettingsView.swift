@@ -77,7 +77,7 @@ struct ChangeSettingsView: View {
                     Spacer()
                     Group {
                         if let imageUrl = authStore.user?.image_url, !imageUrl.isEmpty {
-                            CustomRemoteImage(UrlString: "https://localhost:8080/api/pfp?userid=\(authStore.user?.id)") {
+                            CustomRemoteImage(urlString: "https://localhost:8080/api/pfp?userId=\(authStore.user?.id)") {
                                 Image(systemName: "person.circle.fill")
                                     .resizable()
                                     .foregroundStyle(.secondary)

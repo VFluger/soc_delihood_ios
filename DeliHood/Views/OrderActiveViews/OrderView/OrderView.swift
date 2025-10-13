@@ -79,7 +79,7 @@ struct OrderView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink(destination: AccountView()) {
-                        CustomRemoteImage(UrlString: authStore.user?.image_url) {
+                        CustomRemoteImage(urlString: authStore.user?.image_url) {
                             Image(systemName: "person")
                                 .foregroundStyle(.primary)
                         }

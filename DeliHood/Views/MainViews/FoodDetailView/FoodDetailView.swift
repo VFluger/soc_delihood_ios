@@ -16,7 +16,7 @@ struct FoodDetailView: View {
     var body: some View {
         ScrollView {
             VStack {
-                CustomRemoteImage(UrlString: vm.food.image_url) {
+                CustomRemoteImage(urlString: vm.food.image_url) {
                         Image("food-placeholder")
                             .resizable()
                             .renderingMode(.template)
@@ -43,7 +43,7 @@ struct FoodDetailView: View {
                         .font(.title)
                         .offset(x: 10)
                     HStack {
-                        CustomRemoteImage(UrlString: vm.cook.image_url) {
+                        CustomRemoteImage(urlString: vm.cook.image_url) {
                             Image(systemName: "person")
                                 .resizable()
                                 .scaledToFit()

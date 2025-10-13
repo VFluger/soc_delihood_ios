@@ -89,3 +89,7 @@ struct OrdersResponse: Decodable {
 struct OrderDetailResponse: Decodable {
     let data: OrderHistory
 }
+
+struct PfpUpload: Encodable {
+    let pfp: Data
+}
