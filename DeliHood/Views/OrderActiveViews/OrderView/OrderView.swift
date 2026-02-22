@@ -8,12 +8,21 @@
 import SwiftUI
 import Lottie
 
+import MapKit
+
+private struct DriverAnnotation: Identifiable {
+    let id = UUID()
+    let coordinate: CLLocationCoordinate2D
+}
+
 struct OrderView: View {
     @EnvironmentObject var orderStore: OrderStore
     @EnvironmentObject var authStore: AuthStore
 
     @State private var showSettings = false
     @State private var alertItem: AlertItem?
+    @State private var driverLocation: MKMapPoint? = nil
+    @State private var mapRegion: MKCoordinateRegion? = nil
     
     @State var liveActivityVm = LiveActivityViewModel()
     
@@ -38,6 +47,22 @@ struct OrderView: View {
                     OrderInfoView(title: "The food is on the way!",
                                   description: "Driver is already on the way to deliver your order. They'll call you when it's there.",
                                   lottieName: "delivering-animation")
+                    if let driverLocation {
+                        let coord = driverLocation.coordinate
+                        let region = MKCoordinateRegion(center: coord,
+                                                        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+                        let annotations = [DriverAnnotation(coordinate: coord)]
+                        Map(coordinateRegion: Binding(get: {
+                            mapRegion ?? region
+                        }, set: { newValue in
+                            mapRegion = newValue
+                        }), annotationItems: annotations) { item in
+                            MapMarker(coordinate: item.coordinate)
+                        }
+                        .frame(height: 240)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .padding(.horizontal)
+                    }
                 case .delivered:
                     OrderInfoView(title: "Done! Your order is at your doorstep.",
                                   description: "Come pickup your delicious meal and bon appetit!",
@@ -75,6 +100,58 @@ struct OrderView: View {
                         liveActivityVm.startLiveActivity()
                     }
                 }
+            }
+            .onAppear {
+                // Ensure socket is connected
+                AppSocketManager.shared.connect()
+
+                AppSocketManager.shared.onOrderAccepted = { [weak orderStore] _ in
+                    DispatchQueue.main.async {
+                        orderStore?.currentOrder?.status = .accepted
+                    }
+                }
+
+                AppSocketManager.shared.onOrderReady = { [weak orderStore] _ in
+                    DispatchQueue.main.async {
+                        orderStore?.currentOrder?.status = .waitingForPickup
+                    }
+                }
+
+                AppSocketManager.shared.onFoodPickup = { [weak orderStore] _ in
+                    DispatchQueue.main.async {
+                        orderStore?.currentOrder?.status = .delivering
+                    }
+                }
+
+                AppSocketManager.shared.onDropoffReady = { [weak orderStore] _ in
+                    DispatchQueue.main.async {
+                        orderStore?.currentOrder?.status = .dropoffReady
+                    }
+                }
+
+                AppSocketManager.shared.onDriverLocation = { [weak self] payload in
+                    guard let self = self else { return }
+                    // Expecting { locationLat, locationLng, orderId }
+                    if let dict = payload as? [String: Any] {
+                        let lat = dict["locationLat"] as? Double
+                        let lng = dict["locationLng"] as? Double
+                        if let lat = lat, let lng = lng {
+                            let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lng)
+                            let point = MKMapPoint(coordinate)
+                            DispatchQueue.main.async {
+                                self.driverLocation = point
+                            }
+                        }
+                    }
+                }
+            }
+            .onDisappear {
+                // Clear callbacks to avoid retain cycles / duplicate handlers
+                AppSocketManager.shared.onOrderAccepted = nil
+                AppSocketManager.shared.onOrderReady = nil
+                AppSocketManager.shared.onFoodPickup = nil
+                AppSocketManager.shared.onDropoffReady = nil
+                AppSocketManager.shared.onDriverLocation = nil
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

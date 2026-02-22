@@ -15,6 +15,7 @@ enum OrderStatus: String, Codable {
     case accepted
     case waitingForPickup = "waiting for pickup"
     case delivering
+    case dropoffReady
     case delivered
     case cancelled
 }
